@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include<string.h>
 #define MAX 10
 #define INFINITY 9999
 
@@ -7,14 +8,23 @@ int n=0,graph[MAX][MAX];
 char place[MAX][50];
 
 void graph_input(){
-    scanf("%d",&n);
+    FILE *fp;
+    fp=fopen("input.txt","r");
+    fscanf(fp,"%d",&n);
     for(int i=0;i<n;i++){
-        scanf("%s",&place[i]);
+        fscanf(fp,"%s",&place[i]);
     }
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
-            scanf("%d",&graph[i][j]);
+            fscanf(fp,"%d",&graph[i][j]);
         }
+    }
+    fclose(fp);
+}
+
+int get_index(char name[]){
+    for(int i=0;i<n;i++){
+        if(!strcmp(name,place[i])) return i;
     }
 }
 
@@ -71,7 +81,7 @@ void Dijkstra(int start,int end){
         printf("Previous node is %d\n",prev[i]);
     }
 */
-    printf("Min distance from %d to %d is %d\n",start,end,dis[end]);
+    printf("Min distance from %s to %s is %d\n",place[start],place[end],dis[end]);
 
     print_path(start,end,prev,1);
 }
@@ -101,10 +111,42 @@ void print_graph(){
     }
 }
 
-int main()
-{   freopen("input.txt","r",stdin);
-    graph_input();
-    print_graph();
-    Dijkstra(0,3);
+void menu(){
+    int op=0;
+    for(;op!=4;){
+    printf("\n===Welcome===\n");
+    printf("1. Load Map\n");
+    printf("2. View the Locations\n");
+    printf("3. View the Shortest Path\n");
+    printf("4. Exit\n");
+    printf("Select Your Option: ");
+    scanf("%d",&op);
+    if(op==1){
+        printf("\n***Map LOADED***");
+        graph_input();
+    }
+    else if(op==2){
+        for(int i=0;i<n;i++){
+        printf("%d. %s\n",i,place[i]);
+    }
+    }
+    else if(op==3){
+        char start[50],end[50];
+        printf("Enter the Starting Location-");
+        scanf("%s",start);
+        getchar();
+        printf("Enter the Stoppting Location-");
+        scanf("%s",end);
+        getchar();
+        Dijkstra(get_index(start),get_index(end));
+    }
+    else if(op==4){
+        break;
+    }
+    }
+}
+
+int main(){
+    menu();
     return 0;
 }
