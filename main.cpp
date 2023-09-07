@@ -21,9 +21,28 @@ void view_graph(){
         circle(x_cor[i],y_cor[i],10);
         floodfill(x_cor[i],y_cor[i],WHITE);
     }
+
+    for(int i=0;i<n;i++){
+        for(int j=i+1;j<n;j++){
+            line(x_cor[i],y_cor[i],x_cor[j],y_cor[j]);
+        }
+    }
+
+    for(int i=0;i<n;i++){
+        outtextxy(x_cor[i]-25,y_cor[i]+15,place[i]);
+    }
+
+    setcolor(YELLOW);
     for(int i=0;path_array[i+1];i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
+        int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
+        for(;x<=x_cor[path_array[i+1]] && y<=y_cor[path_array[i+1]];x=x+1,y=y+1){
+            circle(x,y,5);
+            floodfill(x,y,YELLOW);
+            delay(10);
+        }
     }
+
     getch();
     closegraph();
 }
@@ -161,7 +180,6 @@ void menu(){
     printf("3. View the Graph\n");
     printf("4. View the Shortest Path\n");
     printf("5. Exit\n");
-    printf("6. path index\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
     if(op==1){
@@ -182,16 +200,13 @@ void menu(){
         printf("Enter the Starting Location-");
         scanf("%s",start);
         getchar();
-        printf("Enter the Stoppting Location-");
+        printf("Enter the Stopping Location-");
         scanf("%s",end);
         getchar();
         Dijkstra(get_index(start),get_index(end));
     }
     else if(op==5){
         break;
-    }
-    else if(op==6){
-        for(int i=0;i<point;i++) printf("-%d",path_array[i]);
     }
     }
 }
