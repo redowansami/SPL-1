@@ -33,14 +33,17 @@ void view_graph(){
     }
 
     setcolor(YELLOW);
-    for(int i=0;path_array[i+1];i++){
+    for(int i=0;i<point-1;i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
-//        int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
-//        for(;x<=x_cor[path_array[i+1]] && y<=y_cor[path_array[i+1]];x=x+1,y=y+1){
-//            circle(x,y,5);
-//            floodfill(x,y,YELLOW);
-//            delay(10);
-//        }
+
+        int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
+        float h1=x_cor[path_array[i+1]]-x_cor[path_array[i]] , h2=y_cor[path_array[i+1]]-y_cor[path_array[i]];
+        h1/=30;
+        h2/=30;
+        for(int i=0;i<=30;x+=h1,y+=h2,i++){
+            circle(x,y,3);
+            delay(50);
+        }
     }
 
     getch();
@@ -80,6 +83,13 @@ void print_path(int start,int end,int prev[],int flag){
     }
 }
 */
+
+void clear_path(){
+    for(int i=0;i<point;i++){
+        path_array[i]='\0';
+    }
+    point=0;
+}
 
 void print_path(int start,int end,int prev[],int flag){
     if(flag){
@@ -197,6 +207,7 @@ void menu(){
 
     else if(op==4){
         char start[50],end[50];
+        char choose;
         printf("Enter the Starting Location-");
         scanf("%s",start);
         getchar();
@@ -204,6 +215,13 @@ void menu(){
         scanf("%s",end);
         getchar();
         Dijkstra(get_index(start),get_index(end));
+        printf("Show the graph?(Y/N) :");
+        scanf("%c",&choose);
+        if(choose=='Y'){
+             view_graph();
+             clear_path();
+        }
+        else if(choose=='N') clear_path();
     }
     else if(op==5){
         break;
