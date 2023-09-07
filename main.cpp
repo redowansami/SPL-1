@@ -2,13 +2,14 @@
 #include <graphics.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 #define MAX 10
 #define INFINITY 9999
 using namespace std;
 
-int n=0,graph[MAX][MAX];
+int n=0,graph[MAX][MAX],point=0;
 char place[MAX][50];
+int path_array[MAX];
 
 void view_graph(){
     int x_cor[]={100,75,250,350,200,150,250,350};
@@ -19,6 +20,9 @@ void view_graph(){
     for(int i=0;i<n;i++){
         circle(x_cor[i],y_cor[i],10);
         floodfill(x_cor[i],y_cor[i],WHITE);
+    }
+    for(int i=0;path_array[i+1];i++){
+        line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
     }
     getch();
     closegraph();
@@ -44,7 +48,7 @@ int get_index(char name[]){
         if(!strcmp(name,place[i])) return i;
     }
 }
-
+/*
 void print_path(int start,int end,int prev[],int flag){
     if(flag){
         printf("%s ->",place[start]);
@@ -54,7 +58,26 @@ void print_path(int start,int end,int prev[],int flag){
     }
     if(prev[end]!=start){
         print_path(start,prev[end],prev,0);
+    }
+}
+*/
+
+void print_path(int start,int end,int prev[],int flag){
+    if(flag){
+        printf("%s ->",place[start]);
+        path_array[point]=start;
+        point++;
+    }
+    if(prev[end]==start){
         printf("%s ->",place[end]);
+        path_array[point]=end;
+        point++;
+    }
+    if(prev[end]!=start){
+        print_path(start,prev[end],prev,0);
+        printf("%s ->",place[end]);
+        path_array[point]=end;
+        point++;
     }
 }
 
@@ -138,6 +161,7 @@ void menu(){
     printf("3. View the Graph\n");
     printf("4. View the Shortest Path\n");
     printf("5. Exit\n");
+    printf("6. path index\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
     if(op==1){
@@ -165,6 +189,9 @@ void menu(){
     }
     else if(op==5){
         break;
+    }
+    else if(op==6){
+        for(int i=0;i<point;i++) printf("-%d",path_array[i]);
     }
     }
 }
