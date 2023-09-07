@@ -35,12 +35,12 @@ void view_graph(){
     setcolor(YELLOW);
     for(int i=0;path_array[i+1];i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
-        int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
-        for(;x<=x_cor[path_array[i+1]] && y<=y_cor[path_array[i+1]];x=x+1,y=y+1){
-            circle(x,y,5);
-            floodfill(x,y,YELLOW);
-            delay(10);
-        }
+//        int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
+//        for(;x<=x_cor[path_array[i+1]] && y<=y_cor[path_array[i+1]];x=x+1,y=y+1){
+//            circle(x,y,5);
+//            floodfill(x,y,YELLOW);
+//            delay(10);
+//        }
     }
 
     getch();
