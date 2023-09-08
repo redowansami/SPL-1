@@ -1,3 +1,6 @@
+/*
+
+*/
 #include <iostream>
 #include <graphics.h>
 #include <stdio.h>
@@ -54,14 +57,20 @@ void view_graph(){
     }
 
     if(path_array[0]>=0){
-        setcolor(LIGHTBLUE);
-        setfillstyle(SOLID_FILL,LIGHTBLUE);
+        setcolor(GREEN);
+        setfillstyle(SOLID_FILL,GREEN);
         char reached[50];
         strcat(reached,"STARTED FROM ");
         strcat(reached,place[path_array[0]]);
         outtextxy(250,0,reached);
         circle(x_cor[path_array[0]],y_cor[path_array[0]],10);
-        floodfill(x_cor[path_array[0]],y_cor[path_array[0]],LIGHTBLUE);
+        floodfill(x_cor[path_array[0]],y_cor[path_array[0]],GREEN);
+
+        setcolor(MAGENTA);
+        setfillstyle(SOLID_FILL,MAGENTA);
+        circle(x_cor[path_array[point-1]],y_cor[path_array[point-1]],10);
+        floodfill(x_cor[path_array[point-1]],y_cor[path_array[point-1]],MAGENTA);
+
         setcolor(LIGHTCYAN);
         setfillstyle(SOLID_FILL,LIGHTCYAN);
     }
@@ -93,6 +102,12 @@ void view_graph(){
     closegraph();
 }
 
+int get_index(char name[]){
+    for(int i=0;i<n;i++){
+        if(!strcmp(name,place[i])) return i;
+    }
+}
+
 void graph_input(){
     //Path initialization
     for(int i=0;i<=MAX;i++){
@@ -106,36 +121,24 @@ void graph_input(){
         fscanf(fp,"%f",&x_cor[i]);
         fscanf(fp,"%f",&y_cor[i]);
     }
-    for(int i=0;i<n;i++){
-        for(int j=0;j<n;j++){
-            fscanf(fp,"%d",&graph[i][j]);
-        }
+    char from[50],to[50];
+    int x,y;
+
+    for(int i=0;i<((n*n)-n)/2;i++){
+        int num;
+        fscanf(fp,"%s",from);
+        fscanf(fp,"%s",to);
+        x=get_index(from);
+        y=get_index(to);
+        fscanf(fp,"%d",&num);
+        graph[x][y]=graph[y][x]=num;
     }
     fclose(fp);
 }
 
-int get_index(char name[]){
-    for(int i=0;i<n;i++){
-        if(!strcmp(name,place[i])) return i;
-    }
-}
-/*
-void print_path(int start,int end,int prev[],int flag){
-    if(flag){
-        printf("%s ->",place[start]);
-    }
-    if(prev[end]==start){
-        printf("%s ->",place[end]);
-    }
-    if(prev[end]!=start){
-        print_path(start,prev[end],prev,0);
-    }
-}
-*/
-
 void clear_path(){
     for(int i=0;i<point;i++){
-        path_array[i]='\0';
+        path_array[i]=-1;
     }
     point=0;
 }
@@ -266,20 +269,17 @@ int tsp(int mask, int pos,int start){
 
 void print_tsp_path(int mask,int pos,int start,int flag){
     if(flag){
-        //printf("%s ->",place[start]);
         path_array[point]=start;
         point++;
     }
     if(mask==visited_ALL){
         if (pos != start) {
-            //printf(" -> %s", place[start]); // Return to the start city
             path_array[point] = start;
             point++;
         }
         return;
     }
     int next=parent[pos][mask];
-    //printf(" -> %s",place[next]);
     path_array[point]=next;
     point++;
     print_tsp_path(mask|(1<<next),next,start,0);
@@ -288,13 +288,16 @@ void print_tsp_path(int mask,int pos,int start,int flag){
 void menu(){
     int op=0;
     for(;op!=6;){
-    printf("\n===Welcome===\n");
-    printf("1. Load Map\n");
-    printf("2. View the Locations\n");
-    printf("3. View the Graph\n");
-    printf("4. View the Shortest Path\n");
-    printf("5. View the route will min distance\n");
-    printf("6. Exit\n");
+    printf("\n");
+    printf(" _______________________________________\n");
+    printf("|               ===MENU===              |\n");
+    printf("| 1. Load Map                           |\n");
+    printf("| 2. View the Locations                 |\n");
+    printf("| 3. View the Graph                     |\n");
+    printf("| 4. View the Shortest Path             |\n");
+    printf("| 5. View the route with min distance   |\n");
+    printf("| 6. Exit                               |\n");
+    printf("|_______________________________________|\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
     if(op==1){
@@ -336,8 +339,9 @@ void menu(){
         scanf("%s",s_loc);
         getchar();
         //CHAGING THE MASK
-        printf("Minimum distance is %d\n",tsp(1<<get_index(s_loc),get_index(s_loc),get_index(s_loc)));
-        print_tsp_path(1<<get_index(s_loc),get_index(s_loc),get_index(s_loc),1);
+        int x=get_index(s_loc);
+        printf("Minimum distance is %d\n",tsp(1<<x,x,x));
+        print_tsp_path(1<<x,x,x,1);
         printf("\n");
         for(int i=0;i<point;i++){
             printf("%s->",place[path_array[i]]);
@@ -350,7 +354,6 @@ void menu(){
              clear_path();
         }
         else if(choose=='N') clear_path();
-
     }
     else if(op==6){
         break;
