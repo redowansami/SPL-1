@@ -1,25 +1,50 @@
 #include <iostream>
 #include <graphics.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #define MAX 10
-#define INFINITY 9999
+#define INFINITY 99999
 using namespace std;
 
 int n=0,graph[MAX][MAX],point=0;
 char place[MAX][50];
-int path_array[MAX];
+float x_cor[MAX],y_cor[MAX];
+int path_array[MAX+1];
+
+int visited_ALL;
+int dp[MAX][1<<MAX],parent[MAX][1<<MAX];
 
 void view_graph(){
-    int x_cor[]={100,75,250,350,200,150,250,350};
-    int y_cor[]={100,200,100,120,200,350,300,400};
-    initwindow(500,500,"THE WINDOWS");
-    setcolor(WHITE);
-    setfillstyle(SOLID_FILL,WHITE);
+
+    float min_x=INFINITY,min_y=INFINITY;
+    //getting the min value
+    for(int i=0;i<n;i++){
+        if(x_cor[i]<min_x) min_x=x_cor[i];
+        if(y_cor[i]<min_y) min_y=y_cor[i];
+    }
+
+    for(int i=0;i<n;i++){
+        x_cor[i]=((x_cor[i]-min_x+1)*100);
+        y_cor[i]=(y_cor[i]-min_y+1)*100;
+    }
+    //for(int i=0;i<n;i++) printf("%s %f %f\n",place[i],x_cor[i],y_cor[i]);
+
+    initwindow(700,700,"THE WINDOWS");
+    for(int i=0;i<n;i++){
+        float temp;
+        temp=x_cor[i];
+        x_cor[i]=y_cor[i];
+        y_cor[i]=600-temp;
+    }
+
+    setcolor(LIGHTCYAN);
+    setfillstyle(SOLID_FILL,LIGHTCYAN);
+
+    //rotating co ordinates
+
     for(int i=0;i<n;i++){
         circle(x_cor[i],y_cor[i],10);
-        floodfill(x_cor[i],y_cor[i],WHITE);
+        floodfill(x_cor[i],y_cor[i],LIGHTCYAN);
     }
 
     for(int i=0;i<n;i++){
@@ -28,22 +53,40 @@ void view_graph(){
         }
     }
 
+    if(path_array[0]>=0){
+        setcolor(LIGHTBLUE);
+        setfillstyle(SOLID_FILL,LIGHTBLUE);
+        char reached[50];
+        strcat(reached,"STARTED FROM ");
+        strcat(reached,place[path_array[0]]);
+        outtextxy(250,0,reached);
+        circle(x_cor[path_array[0]],y_cor[path_array[0]],10);
+        floodfill(x_cor[path_array[0]],y_cor[path_array[0]],LIGHTBLUE);
+        setcolor(LIGHTCYAN);
+        setfillstyle(SOLID_FILL,LIGHTCYAN);
+    }
+
     for(int i=0;i<n;i++){
         outtextxy(x_cor[i]-25,y_cor[i]+15,place[i]);
     }
 
     setcolor(YELLOW);
-    for(int i=0;i<point-1;i++){
+    for(int i=0;path_array[i+1]>=0;i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
 
         int x=x_cor[path_array[i]],y=y_cor[path_array[i]];
-        float h1=x_cor[path_array[i+1]]-x_cor[path_array[i]] , h2=y_cor[path_array[i+1]]-y_cor[path_array[i]];
-        h1/=30;
-        h2/=30;
-        for(int i=0;i<=30;x+=h1,y+=h2,i++){
-            circle(x,y,3);
+        float h1=x_cor[path_array[i+1]]-x , h2=y_cor[path_array[i+1]]-y;
+        h1/=10;
+        h2/=10;
+        for(int i=0;i<=10;x+=h1,y+=h2,i++){
+            circle(x,y,5);
             delay(50);
         }
+        char reached[50];
+        strcpy(reached,"");
+        strcat(reached,"REACHED ");
+        strcat(reached,place[path_array[i+1]]);
+        outtextxy(0,0+i*20,reached);
     }
 
     getch();
@@ -51,11 +94,17 @@ void view_graph(){
 }
 
 void graph_input(){
+    //Path initialization
+    for(int i=0;i<=MAX;i++){
+        path_array[i]=-1;
+    }
     FILE *fp;
     fp=fopen("input.txt","r");
     fscanf(fp,"%d",&n);
     for(int i=0;i<n;i++){
         fscanf(fp,"%s",&place[i]);
+        fscanf(fp,"%f",&x_cor[i]);
+        fscanf(fp,"%f",&y_cor[i]);
     }
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
@@ -181,15 +230,71 @@ void print_graph(){
     }
 }
 
+void tsp_initials(){
+    visited_ALL = (1<<n)-1;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<(1<<MAX);j++){
+            dp[i][j]=-1;
+        }
+    }
+}
+
+int tsp(int mask, int pos,int start){
+
+    if(mask==visited_ALL){
+        return graph[pos][start];
+    }
+    if(dp[pos][mask]!=-1){
+        return dp[pos][mask];
+    }
+
+    int dis=9999;
+    int next_c=-1;
+    for(int c=0;c<n;c++){
+        if((mask & (1<<c))==0){
+            int new_dis=graph[pos][c]+tsp(mask|(1<<c),c,start);
+            if(new_dis < dis){
+                dis=new_dis;
+                next_c=c;
+            }
+        }
+    }
+    dp[pos][mask]=dis;
+    parent[pos][mask]=next_c;
+    return dis;
+}
+
+void print_tsp_path(int mask,int pos,int start,int flag){
+    if(flag){
+        //printf("%s ->",place[start]);
+        path_array[point]=start;
+        point++;
+    }
+    if(mask==visited_ALL){
+        if (pos != start) {
+            //printf(" -> %s", place[start]); // Return to the start city
+            path_array[point] = start;
+            point++;
+        }
+        return;
+    }
+    int next=parent[pos][mask];
+    //printf(" -> %s",place[next]);
+    path_array[point]=next;
+    point++;
+    print_tsp_path(mask|(1<<next),next,start,0);
+}
+
 void menu(){
     int op=0;
-    for(;op!=5;){
+    for(;op!=6;){
     printf("\n===Welcome===\n");
     printf("1. Load Map\n");
     printf("2. View the Locations\n");
     printf("3. View the Graph\n");
     printf("4. View the Shortest Path\n");
-    printf("5. Exit\n");
+    printf("5. View the route will min distance\n");
+    printf("6. Exit\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
     if(op==1){
@@ -224,6 +329,30 @@ void menu(){
         else if(choose=='N') clear_path();
     }
     else if(op==5){
+        tsp_initials();
+        char s_loc[50];
+        char choose;
+        printf("Enter the starting location: ");
+        scanf("%s",s_loc);
+        getchar();
+        //CHAGING THE MASK
+        printf("Minimum distance is %d\n",tsp(1<<get_index(s_loc),get_index(s_loc),get_index(s_loc)));
+        print_tsp_path(1<<get_index(s_loc),get_index(s_loc),get_index(s_loc),1);
+        printf("\n");
+        for(int i=0;i<point;i++){
+            printf("%s->",place[path_array[i]]);
+        }
+        printf("\n");
+        printf("Show the graph?(Y/N) :");
+        scanf("%c",&choose);
+        if(choose=='Y'){
+             view_graph();
+             clear_path();
+        }
+        else if(choose=='N') clear_path();
+
+    }
+    else if(op==6){
         break;
     }
     }

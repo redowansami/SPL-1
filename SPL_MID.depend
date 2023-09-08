@@ -1,8 +1,7 @@
 # depslib dependency file v1.0
-1694123682 source:e:\study\third semester\spl_mid\main.cpp
+1694192453 source:e:\study\third semester\spl_mid\main.cpp
 	<iostream>
 	<graphics.h>
 	<stdio.h>
-	<stdlib.h>
 	<string.h>
 
