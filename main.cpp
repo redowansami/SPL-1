@@ -1,6 +1,3 @@
-/*
-
-*/
 #include <iostream>
 #include <graphics.h>
 #include <stdio.h>
@@ -89,7 +86,7 @@ void view_graph(){
         h2/=10;
         for(int i=0;i<=10;x+=h1,y+=h2,i++){
             circle(x,y,5);
-            delay(50);
+            delay(200);
         }
         char reached[50];
         strcpy(reached,"");
