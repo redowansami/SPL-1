@@ -5,21 +5,38 @@
 	<stdio.h>
 	<string.h>
 
-1696295715 source:e:\study\third semester\spl_mid - copy\main.cpp
+1702187744 source:e:\study\third semester\spl_mid - copy\main.cpp
 	<iostream>
 	"graph.h"
 	"dijkstra.h"
 	"tsp.h"
 	"floyd.h"
+	"A-star.h"
 	<stdio.h>
 	<string.h>
 
-1696178227 e:\study\third semester\spl_mid - copy\graph.h
+1702343510 e:\study\third semester\spl_mid - copy\graph.h
 	<graphics.h>
+	"CalcDistance.h"
 
 1696177706 e:\study\third semester\spl_mid - copy\dijkstra.h
 
 1696177865 e:\study\third semester\spl_mid - copy\tsp.h
 
-1696298148 e:\study\third semester\spl_mid - copy\floyd.h
+1696305449 e:\study\third semester\spl_mid - copy\floyd.h
+
+1702163957 e:\study\third semester\spl_mid - copy\prac.h
+	<stdio.h>
+	<math.h>
+	<algorithm>
+
+1702164068 e:\study\third semester\spl_mid - copy\calcdistance.h
+	<stdio.h>
+	<math.h>
+	<algorithm>
+
+1702189867 e:\study\third semester\spl_mid - copy\a-star.h
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
 

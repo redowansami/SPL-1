@@ -4,6 +4,7 @@
 #include "dijkstra.h"
 #include "tsp.h"
 #include "floyd.h"
+#include "A-star.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -22,6 +23,8 @@ void menu(){
     printf("| 4. View the Shortest Path             |\n");
     printf("| 5. View the route with min distance   |\n");
     printf("| 6. Exit                               |\n");
+    printf("| 7. A* Search                          |\n");
+    printf("| 8. Remove path                        |\n");
     printf("|_______________________________________|\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
@@ -80,6 +83,41 @@ void menu(){
         }
         else if(choose=='N') clear_path();
     }
+
+    else if(op==7){
+        char start[50],end[50];
+        char choose;
+        printf("Enter the Starting Location-");
+        scanf("%s",start);
+        getchar();
+        printf("Enter the Stopping Location-");
+        scanf("%s",end);
+        getchar();
+        int heuristicValues[MAX_NODES] = {0, 9, 40, 2, 8000, 1, 3, 5};
+        aStarSearch(graph ,n ,get_index(start) ,get_index(end) , heuristicValues);
+        printf("Show the graph?(Y/N) :");
+        scanf("%c",&choose);
+        if(choose=='Y'){
+             view_graph();
+             clear_path();
+        }
+        else if(choose=='N') clear_path();
+    }
+
+    else if(op==8){
+        char start[50],end[50];
+        char choose;
+        printf("Enter the Starting Location-");
+        scanf("%s",start);
+        getchar();
+        printf("Enter the Stopping Location-");
+        scanf("%s",end);
+        getchar();
+        graph[get_index(start)][get_index(end)]=INT_MAX;
+        graph[get_index(end)][get_index(start)]=INT_MAX;
+        printf("Path removed successfully from %s to %s\n",start,end);
+    }
+
     else if(op==6){
         break;
     }
@@ -87,12 +125,12 @@ void menu(){
 }
 
 int main(){
-    //menu();
-    graph_input();
-    for(int i=0;i<n;i++){
-        printf("%d. %s\n",i,place[i]);
-    }
-    floydWarshall();
-    print_graph();
+    menu();
+//    graph_input();
+//    for(int i=0;i<n;i++){
+//        printf("%d. %s\n",i,place[i]);
+//    }
+//    floydWarshall();
+//    print_graph();
     return 0;
 }

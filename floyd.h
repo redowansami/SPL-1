@@ -20,7 +20,7 @@ void print_floyd_path(int next[MAX][MAX],int start,int end){
         return;
     }
     else if(next[start][end]==start){
-        printf("%s",place[start]);
+        printf("%s->",place[start]);
     }
     else{
         print_floyd_path(next,start,next[start][end]);
