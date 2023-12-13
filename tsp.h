@@ -22,7 +22,7 @@ int tsp(int mask, int pos,int start){
         return dp[pos][mask];
     }
 
-    int dis=9999;
+    int dis=INT_MAX;
     int next_c=-1;
     for(int c=0;c<n;c++){
         if((mask & (1<<c))==0){

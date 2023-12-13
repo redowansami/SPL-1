@@ -27,7 +27,7 @@ void Dijkstra(int start,int end){
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
 
-            if(graph[i][j]==0)
+            if(graph[i][j]==0 || graph[i][j]==INT_MAX)
                 cost[i][j]=INFINITY;
 
             else cost[i][j]=graph[i][j];
