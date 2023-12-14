@@ -3,6 +3,8 @@
 
 #include "graph.h"
 #include "dijkstra.h"
+#include "kruskal.h"
+#include "prims.h"
 #include "tsp.h"
 #include "floyd.h"
 #include "A-star.h"
@@ -10,24 +12,28 @@
 
 void menu(){
     int op=0;
-    for(;op!=9;){
+    for(;op!=11;){
     printf("\n");
-    printf(" _______________________________________\n");
-    printf("|               ===MENU===              |\n");
-    printf("| 1. Load Map                           |\n");
-    printf("| 2. View the Locations                 |\n");
-    printf("| 3. View the Graph                     |\n");
-    printf("| 4. View Path                          |\n");
-    printf("| 5. View the Shortest Path(Dijkstra)   |\n");
-    printf("| 6. View the Shortest Path(A*)         |\n");
-    printf("| 7. View the route with min distance   |\n");
-    printf("| 8. Remove path                        |\n");
-    printf("| 9. Exit                               |\n");
-    printf("|_______________________________________|\n");
+    printf("                 ___________________________________________\n");
+    printf("                |               ===MENU===                  |\n");
+    printf("                | 1. Load Map                               |\n");
+    printf("                | 2. View the Locations                     |\n");
+    printf("                | 3. View the Graph                         |\n");
+    printf("                | 4. View Path                              |\n");
+    printf("                | 5. View the Shortest Path(Dijkstra)       |\n");
+    printf("                | 6. View the Shortest Path(A*)             |\n");
+    printf("                | 7. View the route with minimum distance   |\n");
+    printf("                |    and back to starting point             |\n");
+    printf("                | 8. Paths with Minimum Distance to         |\n");
+    printf("                |    all Locations                          |\n");
+    printf("                | 9. Paths with Minimum Distance to         |\n");
+    printf("                |    all Locations(From a start point)      |\n");;
+    printf("                | 10. Remove path                           |\n");
+    printf("                | 11. Exit                                  |\n");
+    printf("                |___________________________________________|\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
     if(op==1){
-        printf("\n***Map LOADED***");
         graph_input();
     }
     else if(op==2){
@@ -68,7 +74,7 @@ void menu(){
         printf("Enter the Stopping Location-");
         scanf("%s",end);
         getchar();
-        Dijkstra(get_index(start),get_index(end));
+        Dijkstra(get_index(start),get_index(end),5);
         printf("Show the graph?(Y/N) :");
         scanf("%c",&choose);
         if(choose=='Y'){
@@ -124,6 +130,22 @@ void menu(){
     }
 
     else if(op==8){
+        kruskal();
+        print_kruskal();
+        printf("\n%d\n",n_edge);
+        view_graph();
+    }
+
+    else if(op==9){
+        char start[50];
+        printf("Enter the Starting Location-");
+        scanf("%s",start);
+        getchar();
+        prims(get_index(start));
+        view_graph();
+    }
+
+    else if(op==10){
         char start[50],end[50];
         char choose;
         char stop[5];
@@ -144,9 +166,11 @@ void menu(){
         }
     }
 
-    else if(op==9){
+
+    else if(op==11){
         break;
     }
+
     }
 }
 

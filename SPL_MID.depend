@@ -11,11 +11,11 @@
 	<stdio.h>
 	<string.h>
 
-1702451587 e:\study\third semester\spl_mid - copy\graph.h
+1702559975 e:\study\third semester\spl_mid - copy\graph.h
 	<graphics.h>
 	"CalcDistance.h"
 
-1702459963 e:\study\third semester\spl_mid - copy\dijkstra.h
+1702567907 e:\study\third semester\spl_mid - copy\dijkstra.h
 
 1702451993 e:\study\third semester\spl_mid - copy\tsp.h
 
@@ -40,11 +40,17 @@
 	<stdio.h>
 	<stdlib.h>
 
-1702442354 e:\study\third semester\spl_mid - copy\menu.h
+1702566718 e:\study\third semester\spl_mid - copy\menu.h
 	"graph.h"
 	"dijkstra.h"
+	"kruskal.h"
+	"prims.h"
 	"tsp.h"
 	"floyd.h"
 	"A-star.h"
 	"bfs.h"
+
+1702556142 e:\study\third semester\spl_mid - copy\kruskal.h
+
+1702560124 e:\study\third semester\spl_mid - copy\prims.h
 

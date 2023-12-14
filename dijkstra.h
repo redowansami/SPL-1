@@ -20,19 +20,25 @@ void print_path(int start,int end,int prev[],int flag){
     }
 }
 
-void Dijkstra(int start,int end){
+void Dijkstra(int start,int end,int op){
     int cost[MAX][MAX],dis[MAX],prev[MAX];
     int visited[MAX],count=0,min,next;
+    if(op==5){
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
 
-    for(int i=0;i<n;i++){
-        for(int j=0;j<n;j++){
+                if(graph[i][j]==0 || graph[i][j]==INT_MAX)
+                    cost[i][j]=INFINITY;
 
-            if(graph[i][j]==0 || graph[i][j]==INT_MAX)
-                cost[i][j]=INFINITY;
-
-            else cost[i][j]=graph[i][j];
+                else cost[i][j]=graph[i][j];
+            }
         }
     }
+
+    if(op==6){
+
+    }
+
 
     for(int i=0;i<n;i++){
         dis[i]=cost[start][i];

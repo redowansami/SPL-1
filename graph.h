@@ -10,6 +10,13 @@ char place[MAX][50];
 float x_cor[MAX],y_cor[MAX];
 int path_array[MAX+1];
 
+int n_edge=0;
+typedef struct mst_edges{
+    int u;
+    int v;
+};
+mst_edges edges[MAX];
+
 void view_graph(){
     float min_x=INFINITY,min_y=INFINITY;
     //getting the min value
@@ -667,6 +674,15 @@ line(389,482,389,480);
         setfillstyle(SOLID_FILL,LIGHTRED);
     }
 
+
+    setcolor(YELLOW);
+    if(n_edge>0){
+        for(int i=0;i<=n_edge;i++){
+            line(x_cor[edges[i].u],y_cor[edges[i].u],x_cor[edges[i].v],y_cor[edges[i].v]);
+//            line(x_cor[edges[i].u]+1,y_cor[edges[i].u]+1,x_cor[edges[i].v]+1,y_cor[edges[i].v]+1);
+        }
+    }
+
     for(int i=0;i<n;i++){
         outtextxy(x_cor[i]-25,y_cor[i]+15,place[i]);
     }
@@ -675,7 +691,6 @@ line(389,482,389,480);
     for(int i=0;path_array[i+1]>=0;i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
 
-        //FIXING THIS ONE RN
         float x=x_cor[path_array[i]],y=y_cor[path_array[i]];
         float h1=x_cor[path_array[i+1]]-x , h2=y_cor[path_array[i+1]]-y;
         h1/=10;
@@ -726,8 +741,21 @@ void graph_input(){
     for(int i=0;i<=MAX;i++){
         path_array[i]=-1;
     }
+
+    char f_name[50];
+    printf("\nEnter the file name to load the locations: ");
+    scanf("%s",f_name);
+    getchar();
+
     FILE *fp;
-    fp=fopen("input.txt","r");
+    fp=fopen(f_name,"r");
+    if (fp==NULL){
+        printf("File doesn't exist\n");
+        return;
+    }
+    else{
+        printf("\n***Map LOADED***");
+    }
     fscanf(fp,"%d",&n);
     for(int i=0;i<n;i++){
         fscanf(fp,"%s",&place[i]);
