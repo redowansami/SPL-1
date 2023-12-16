@@ -1,137 +1,115 @@
 #ifndef A-STAR_H_INCLUDED
 #define A-STAR_H_INCLUDED
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+float p_time,p_cost;
+int A_parent[MAX];
 
-#define MAX_NODES 10
-#define INFINITY 999999
+int costArray[MAX][MAX] = {
+        {0, 270, 340, 620, 3800, 490, 580, 680},
+        {270, 0, 310, 580, 340, 320, 400, 640},
+        {340, 310, 0, 340, 160, 460, 550, 450},
+        {620, 580, 340, 0, 300, 750, 840, 480},
+        {3800, 340, 160, 300, 0, 520, 600, 310},
+        {490, 320, 460, 750, 520, 0, 170, 790},
+        {580, 400, 550, 840, 600, 170, 0, 880},
+        {680, 640, 450, 480, 310, 790, 880, 0}
+    };
 
-typedef struct {
-    int id;
-    int g;
-    int h;
-} Node;
+int timeArray[MAX][MAX] = {
+        {0, 200, 240, 420, 270, 250, 400, 450},
+        {200, 0, 230, 430, 260, 240, 300, 440},
+        {240, 230, 0, 240, 120, 340, 280, 290},
+        {420, 430, 240, 0, 210, 400, 600, 310},
+        {270, 260, 120, 210, 0, 380, 440, 190},
+        {250, 240, 340, 400, 380, 0, 120, 540},
+        {400, 300, 280, 600, 440, 120, 0, 600},
+        {450, 440, 290, 310, 190, 540, 600, 0}
+    };
+int astar_graph[MAX][MAX];
 
-typedef struct {
-    Node* nodes[MAX_NODES];
-    int size;
-} PriorityQueue;
+int minFValue(int f[],int openSet[]) {
+    int min=INT_MAX,minIndex;
 
-void initializePriorityQueue(PriorityQueue* pq) {
-    pq->size = 0;
+    for(int v=0;v<n;v++) {
+        if (openSet[v] && f[v]<min) {
+            min = f[v];
+            minIndex = v;
+        }
+    }
+    return minIndex;
 }
 
-bool isPriorityQueueEmpty(PriorityQueue* pq) {
-    return pq->size == 0;
+int heuristic_f(int node,int goal){
+    return costArray[node][goal]*p_cost+timeArray[node][goal]*p_time;
 }
 
-void enqueue(PriorityQueue* pq, Node* node) {
-    int i = pq->size++;
-    while (i > 0) {
-        int parent = (i - 1) / 2;
-        if (pq->nodes[parent]->g + pq->nodes[parent]->h <= node->g + node->h) {
+void aStarSearch(int start, int goal) {
+    int g[MAX];
+    int f[MAX];
+    int openSet[MAX];
+
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            if(graph[i][j]==INT_MAX) astar_graph[i][j]=0;
+            else astar_graph[i][j]=graph[i][j]*(1-p_cost-p_time)+costArray[i][j]*p_cost+timeArray[i][j]*p_time;
+        }
+    }
+    for (int i=0;i<n;i++) {
+        g[i]=INT_MAX;
+        f[i]=INT_MAX;
+        openSet[i]=1;
+        A_parent[i]=-1;
+    }
+
+    g[start]=0;
+    f[start]=heuristic_f(start, goal);
+
+    while(1){
+        int curr=minFValue(f,openSet);
+
+        if (curr == goal || f[curr] == INT_MAX) {
             break;
         }
-        pq->nodes[i] = pq->nodes[parent];
-        i = parent;
-    }
-    pq->nodes[i] = node;
-}
 
-Node* dequeue(PriorityQueue* pq) {
-    Node* minNode = pq->nodes[0];
-    Node* lastNode = pq->nodes[--pq->size];
-    int i = 0;
-    while (i * 2 + 1 < pq->size) {
-        int leftChild = i * 2 + 1;
-        int rightChild = leftChild + 1;
-        int minChild = (rightChild < pq->size && pq->nodes[rightChild]->g + pq->nodes[rightChild]->h < pq->nodes[leftChild]->g + pq->nodes[leftChild]->h) ? rightChild : leftChild;
-        if (pq->nodes[minChild]->g + pq->nodes[minChild]->h >= lastNode->g + lastNode->h) {
-            break;
-        }
-        pq->nodes[i] = pq->nodes[minChild];
-        i = minChild;
-    }
-    pq->nodes[i] = lastNode;
-    return minNode;
-}
+        openSet[curr] = 0;
 
-Node* createNode(int id, int g, int h) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->id = id;
-    newNode->g = g;
-    newNode->h = h;
-    return newNode;
-}
+        for (int i=0;i<n;i++) {
+            if (astar_graph[curr][i] && openSet[i]) {
+                int tentativeG=g[curr]+astar_graph[curr][i];
 
-void aStarSearch(int graph[MAX_NODES][MAX_NODES], int numNodes, int startId, int goalId, int heuristic[MAX_NODES]) {
-    int gValues[MAX_NODES];
-    int parentNodes[MAX_NODES];
-
-    for (int i = 0; i < numNodes; ++i) {
-        gValues[i] = INFINITY;
-        parentNodes[i] = -1;
-    }
-
-    gValues[startId] = 0;
-
-    PriorityQueue openList;
-    initializePriorityQueue(&openList);
-
-    enqueue(&openList, createNode(startId, 0, heuristic[startId]));
-
-    while (!isPriorityQueueEmpty(&openList)) {
-        Node* current = dequeue(&openList);
-
-        if (current->id == goalId) {
-            printf("Goal node found!\n");
-
-            int node = goalId;
-
-            while (parentNodes[node] != -1) {
-                path_array[point++] = node;
-                node = parentNodes[node];
-            }
-
-            path_array[point] = startId;
-
-            printf("Shortest path: ");
-            for (int i=point; i>= 0; --i) {
-                printf("%s ", place[path_array[i]]);
-            }
-            printf("\n");
-
-            int temp[point+1];
-            for(int i=0;i<=point;i++){
-                temp[i]=path_array[i];
-            }
-
-            for(int i=0,j=point;i<=point;i++,j--){
-                path_array[i]=temp[j];
-            }
-
-            free(current);
-            return;
-        }
-
-        for (int neighbor = 0; neighbor < numNodes; ++neighbor) {
-            if (graph[current->id][neighbor] > 0) {
-                int newG = current->g + graph[current->id][neighbor];
-                if (newG < gValues[neighbor]) {
-                    gValues[neighbor] = newG;
-                    parentNodes[neighbor] = current->id;
-
-                    enqueue(&openList, createNode(neighbor, newG, heuristic[neighbor]));
+                if (tentativeG<g[i]) {
+                    g[i]=tentativeG;
+                    f[i]=g[i]+heuristic_f(i, goal);
+                    A_parent[i] = curr;
                 }
             }
         }
+    }
+}
 
-        free(current);
+void astar_path(int path[], int start, int goal) {
+    int curr = goal;
+    int pathIndex = 0;
+    while (curr != -1) {
+        path[pathIndex] = curr;
+        pathIndex++;
+        point++;
+        curr = A_parent[curr];
     }
 
-    printf("No path found.\n");
+    for (int i = 0, j = pathIndex - 1; i < j; i++, j--) {
+        int temp = path[i];
+        path[i] = path[j];
+        path[j] = temp;
+    }
+
+    printf("Stored path from %s to %s: ", place[start], place[goal]);
+    for (int i = 0; i < pathIndex; i++) {
+        printf("%s ", place[path[i]]);
+    }
+
+    printf("\n");
 }
 
 #endif // A-STAR_H_INCLUDED

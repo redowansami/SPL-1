@@ -2,29 +2,27 @@
 #define PRIMS_H_INCLUDED
 
 void prims(int startNode) {
-    int no_edge;
+    int no_edge=0;
     bool selected[MAX];
 
     for(int i=0;i<MAX;i++){
         selected[i]=false;
     }
 
-    no_edge=0;
     selected[startNode]=true;
 
     int x;
     int y;
 
-    printf("Edge : Weight\n");
+    printf("Path : Distance\n");
 
-    while(no_edge<MAX-1){
+    while(no_edge<n-1){
         int min = INT_MAX;
         x=0;
         y=0;
-
-        for(int i=0;i<MAX;i++){
+        for(int i=0;i<n;i++){
             if(selected[i]){
-                for(int j=0;j<MAX;j++) {
+                for(int j=0;j<n;j++) {
                     if (!selected[j] && graph[i][j] && graph[i][j]!=INT_MAX){
                         if (min>graph[i][j]) {
                             min=graph[i][j];
@@ -38,7 +36,7 @@ void prims(int startNode) {
         edges[n_edge].u=x;
         edges[n_edge].v=y;
         n_edge++;
-        if(graph[x][y]) printf("%s -> %s : %d\n",place[x],place[y],graph[x][y]);
+        printf("%s -> %s : %d\n",place[x],place[y],graph[x][y]);
         selected[y]=true;
         no_edge++;
     }

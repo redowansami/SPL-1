@@ -6,13 +6,14 @@
 #include "kruskal.h"
 #include "prims.h"
 #include "tsp.h"
+#include "n_tsp.h"
 #include "floyd.h"
 #include "A-star.h"
 #include "bfs.h"
 
 void menu(){
     int op=0;
-    for(;op!=11;){
+    for(;op!=12;){
     printf("\n");
     printf("                 ___________________________________________\n");
     printf("                |               ===MENU===                  |\n");
@@ -20,16 +21,17 @@ void menu(){
     printf("                | 2. View the Locations                     |\n");
     printf("                | 3. View the Graph                         |\n");
     printf("                | 4. View Path                              |\n");
-    printf("                | 5. View the Shortest Path(Dijkstra)       |\n");
-    printf("                | 6. View the Shortest Path(A*)             |\n");
+    printf("                | 5. View the Shortest Path                 |\n");
+    printf("                | 6. Minimum Cost Path                      |\n");
     printf("                | 7. View the route with minimum distance   |\n");
     printf("                |    and back to starting point             |\n");
-    printf("                | 8. Paths with Minimum Distance to         |\n");
+    printf("                | 8. Paths with Minimum Distance to visit   |\n");
     printf("                |    all Locations                          |\n");
-    printf("                | 9. Paths with Minimum Distance to         |\n");
-    printf("                |    all Locations(From a start point)      |\n");;
-    printf("                | 10. Remove path                           |\n");
-    printf("                | 11. Exit                                  |\n");
+    printf("                | 9. Paths with Minimum Distance to visit   |\n");
+    printf("                |    all Locations(From a start point)      |\n");
+    printf("                | 10. Time and cost effiecient path         |\n");
+    printf("                | 11. Remove path                           |\n");
+    printf("                | 12. Exit                                  |\n");
     printf("                |___________________________________________|\n");
     printf("Select Your Option: ");
     scanf("%d",&op);
@@ -93,8 +95,7 @@ void menu(){
         printf("Enter the Stopping Location-");
         scanf("%s",end);
         getchar();
-        int heuristicValues[MAX_NODES] = {0, 9, 40, 2, 8000, 1, 3, 5};
-        aStarSearch(graph ,n ,get_index(start) ,get_index(end) , heuristicValues);
+        Dijkstra(get_index(start),get_index(end),6);
         printf("Show the graph?(Y/N) :");
         scanf("%c",&choose);
         if(choose=='Y'){
@@ -132,7 +133,6 @@ void menu(){
     else if(op==8){
         kruskal();
         print_kruskal();
-        printf("\n%d\n",n_edge);
         view_graph();
     }
 
@@ -146,6 +146,29 @@ void menu(){
     }
 
     else if(op==10){
+        char start[50],end[50];
+        char choose;
+        printf("Enter the Starting Location-");
+        scanf("%s",start);
+        getchar();
+        printf("Enter the Stopping Location-");
+        scanf("%s",end);
+        getchar();
+        printf("Enter the priority of time and cost(<1)-");
+        scanf("%f %f",&p_time,&p_cost);
+        getchar();
+        aStarSearch(get_index(start),get_index(end));
+        astar_path(path_array,get_index(start),get_index(end));
+        printf("Show the graph?(Y/N) :");
+        scanf("%c",&choose);
+        if(choose=='Y'){
+             view_graph();
+             clear_path();
+        }
+        else if(choose=='N') clear_path();
+    }
+
+    else if(op==11){
         char start[50],end[50];
         char choose;
         char stop[5];
@@ -167,7 +190,7 @@ void menu(){
     }
 
 
-    else if(op==11){
+    else if(op==12){
         break;
     }
 

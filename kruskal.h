@@ -7,7 +7,7 @@ typedef struct edge {
   int w;
 }edge;
 
-typedef struct edge_list{
+typedef struct{
   edge edges[MAX];
   int num;
 }edge_list;
@@ -93,10 +93,5 @@ void kruskal() {
         }
     }
 }
-
-//  int i, j, total_cost;
-//  kruskalAlgo();
-//  print();
-
 
 #endif // KRUSKAL_H_INCLUDED

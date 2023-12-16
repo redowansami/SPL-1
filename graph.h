@@ -9,6 +9,7 @@ int graph[MAX][MAX],n=0,point=0;
 char place[MAX][50];
 float x_cor[MAX],y_cor[MAX];
 int path_array[MAX+1];
+int d_cost[MAX][MAX],d_op=0,total=0;
 
 int n_edge=0;
 typedef struct mst_edges{
@@ -29,9 +30,6 @@ void view_graph(){
         x_cor[i]=((x_cor[i]-min_x+1.2)*95);
         y_cor[i]=(y_cor[i]-min_y+1.15)*95;
     }
-    //for(int i=0;i<n;i++) printf("%s %f %f\n",place[i],x_cor[i],y_cor[i]);
-
-    initwindow(700,700,"THE WINDOWS");
 
     for(int i=0;i<n;i++){
         float temp;
@@ -40,11 +38,8 @@ void view_graph(){
         y_cor[i]=600-temp;
     }
 
-//    for(int i=0;i<=700;i+=25){
-//        line(i,0,i,700);
-//        line(0,i,700,i);
-//    }
-    int p=75;
+    initwindow(700,700,"THE WINDOWS");
+
     setcolor(LIGHTGREEN);
     line(56,80,57,73);
     //continued to leftt
@@ -640,8 +635,6 @@ line(389,482,389,480);
     setcolor(LIGHTRED);
     setfillstyle(SOLID_FILL,LIGHTRED);
 
-    //rotating co ordinates
-
     for(int i=0;i<n;i++){
         circle(x_cor[i],y_cor[i],5);
         floodfill(x_cor[i],y_cor[i],LIGHTRED);
@@ -653,6 +646,10 @@ line(389,482,389,480);
             if(graph[i][j]==INT_MAX) continue;
             line(x_cor[i],y_cor[i],x_cor[j],y_cor[j]);
         }
+    }
+
+    for(int i=0;i<n;i++){
+        outtextxy(x_cor[i]-25,y_cor[i]+15,place[i]);
     }
 
     if(path_array[0]>=0){
@@ -674,23 +671,9 @@ line(389,482,389,480);
         setfillstyle(SOLID_FILL,LIGHTRED);
     }
 
-
-    setcolor(YELLOW);
-    if(n_edge>0){
-        for(int i=0;i<=n_edge;i++){
-            line(x_cor[edges[i].u],y_cor[edges[i].u],x_cor[edges[i].v],y_cor[edges[i].v]);
-//            line(x_cor[edges[i].u]+1,y_cor[edges[i].u]+1,x_cor[edges[i].v]+1,y_cor[edges[i].v]+1);
-        }
-    }
-
-    for(int i=0;i<n;i++){
-        outtextxy(x_cor[i]-25,y_cor[i]+15,place[i]);
-    }
-
     setcolor(YELLOW);
     for(int i=0;path_array[i+1]>=0;i++){
         line(x_cor[path_array[i]],y_cor[path_array[i]],x_cor[path_array[i+1]],y_cor[path_array[i+1]]);
-
         float x=x_cor[path_array[i]],y=y_cor[path_array[i]];
         float h1=x_cor[path_array[i+1]]-x , h2=y_cor[path_array[i+1]]-y;
         h1/=10;
@@ -703,7 +686,22 @@ line(389,482,389,480);
         strcpy(reached,"");
         strcat(reached,"REACHED ");
         strcat(reached,place[path_array[i+1]]);
+
+        if(d_op==6) {
+            strcat(reached," SPENT ");
+            total+=d_cost[path_array[i]][path_array[i+1]];
+            char t[6];
+            sprintf(t,"%d",total);
+            strcat(reached,t);
+        }
         outtextxy(0,0+i*20,reached);
+    }
+
+    setcolor(YELLOW);
+    if(n_edge>0){
+        for(int i=0;i<=n_edge;i++){
+            line(x_cor[edges[i].u],y_cor[edges[i].u],x_cor[edges[i].v],y_cor[edges[i].v]);
+        }
     }
 
     getch();
@@ -753,28 +751,15 @@ void graph_input(){
         printf("File doesn't exist\n");
         return;
     }
-    else{
-        printf("\n***Map LOADED***");
-    }
+
     fscanf(fp,"%d",&n);
     for(int i=0;i<n;i++){
         fscanf(fp,"%s",&place[i]);
         fscanf(fp,"%f",&x_cor[i]);
         fscanf(fp,"%f",&y_cor[i]);
     }
-    //taking manual distance
-//    char from[50],to[50];
-//    int x,y;
-//
-//    for(int i=0;i<((n*n)-n)/2;i++){
-//        int num;
-//        fscanf(fp,"%s",from);
-//        fscanf(fp,"%s",to);
-//        x=get_index(from);
-//        y=get_index(to);
-//        fscanf(fp,"%d",&num);
-//        graph[x][y]=graph[y][x]=num;
-//    }
+
+    printf("***MAP LOADED***\n");
 
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){

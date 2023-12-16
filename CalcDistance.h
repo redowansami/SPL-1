@@ -17,18 +17,19 @@ float min(float a,float b){
 float CalcDistance(float latitud1, float longitud1, float latitud2, float longitud2){
     double haversine;
     double temp;
-    double distancia_puntos;
+    double distance;
 
     latitud1 = latitud1  * TO_RAD;
     longitud1 = longitud1 * TO_RAD;
     latitud2 = latitud2 * TO_RAD;
     longitud2 = longitud2 * TO_RAD;
 
-    haversine = (pow(sin((1.0 / 2) * (latitud2 - latitud1)), 2)) + ((cos(latitud1)) * (cos(latitud2)) * (pow(sin((1.0 / 2) * (longitud2 - longitud1)), 2)));
+    haversine = (pow(sin((1.0 / 2) * (latitud2 - latitud1)), 2)) + ((cos(latitud1)) *
+                (cos(latitud2)) * (pow(sin((1.0 / 2) * (longitud2 - longitud1)), 2)));
     temp = 2 * asin(min(1.0, sqrt(haversine)));
-    distancia_puntos = RADIUS * temp;
+    distance = RADIUS * temp;
 
-   return distancia_puntos;
+   return distance;
 }
 
 
